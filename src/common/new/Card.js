@@ -11,6 +11,8 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 
+import { mediaPrefix } from '../../utils/constants'
+
 import { actionCreators } from "./store";
 const useStyles = makeStyles(theme => ({
   icon: {
@@ -118,7 +120,7 @@ function Cards(props) {
                       color="primary"
                       onClick={() => {
                         window.open(
-                          `http://192.168.0.20:8000/media/client/${
+                          `${mediaPrefix}${
                             client.device
                           }_${client.platform}.conf`
                         );
