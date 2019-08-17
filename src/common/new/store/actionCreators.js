@@ -65,6 +65,8 @@ export const handleClientSubmit = () => {
       client.device.lenght === 0 ||
       client.platform.length === 0 ||
       client.mode.length === 0
+      // Do not check for length for range
+      // since it is defined as extra range
     ) {
       dispatch(handleInputUpdate("error", true));
     } else {

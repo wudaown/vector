@@ -131,6 +131,17 @@ function NewClient(props) {
                   </FormControl>
                 </Grid>
                 <Grid item xs={12}>
+                  <TextField
+                    error={client.range.length === 0 && error}
+                    label="Extra IP Range"
+                    placeholder='192.168.0.0/24, 172.0.0.0/24'
+                    fullWidth
+                    name="range"
+                    value={client.range}
+                    onChange={e => handleClientUpdate("range", e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12}>
                   <Button
                     variant="contained"
                     color="primary"

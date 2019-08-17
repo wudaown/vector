@@ -2,7 +2,7 @@ import * as actionTypes from "./actionTypes";
 
 const defaultState = {
   clients: [],
-  client: { device: "", platform: "", mode: "" },
+  client: { device: "", platform: "", mode: "", range: "" },
   ready: false,
   error: false,
   loading: false
