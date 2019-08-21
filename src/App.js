@@ -22,12 +22,13 @@ function App() {
         <CssBaseline />
         <BrowserRouter>
           <Header />
-          <Route exact path="/login" component={Login} />
+          <New />
+          {/* <Route exact path="/login" component={Login} />
           {!isAuthenticated ? (
             <Route exact path="/new" component={New} />
           ) : (
-            <Redirect to="/login" />
-          )}
+              <Redirect to="/login" />
+            )} */}
         </BrowserRouter>
       </Provider>
     </React.Fragment>
