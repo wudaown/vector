@@ -1,22 +1,13 @@
 import axios from "axios";
-import { hostname } from "./constants";
-console.log(hostname);
-
-var url;
-
-// if (process.env.NODE_ENV !== "production") {
-url = `http://${hostname}:8000/api/`;
-// }
-
-// const loginUrl = "/login";
+import { API } from "./constants";
 
 const Axios = axios.create({
-  baseURL: url,
+  baseURL: API,
   timeout: 10000,
   headers: {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   },
-  withCredentials: true
+  withCredentials: true,
 });
 
 // interceptor to add token to header
