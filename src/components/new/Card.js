@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -11,56 +10,55 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 
-import { mediaPrefix } from '../../utils/constants'
+import { mediaPrefix } from "../../utils/constants";
 
-import { actionCreators } from "./store";
 const useStyles = makeStyles(theme => ({
   icon: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   heroContent: {
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(8, 0, 6)
+    padding: theme.spacing(8, 0, 6),
   },
   heroButtons: {
-    marginTop: theme.spacing(4)
+    marginTop: theme.spacing(4),
   },
   cardGrid: {
     paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(8)
+    paddingBottom: theme.spacing(8),
   },
   card: {
     height: "100%",
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
   },
   cardMedia: {
     // paddingTop: "56.25%" // 16:9
     marginTop: theme.spacing(2),
     marginLeft: theme.spacing(2),
     width: "40px",
-    height: "40px"
+    height: "40px",
     // height: "20vh"
   },
   cardContent: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   footer: {
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(6)
+    padding: theme.spacing(6),
   },
   cardHeader: {
     marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(2)
-  }
+    marginLeft: theme.spacing(2),
+  },
 }));
 
-function Cards(props) {
+export default function Cards(props) {
   const classes = useStyles();
 
   const { clients } = props;
 
-  const { DeleteClient } = props;
+  const { deleteClient } = props;
 
   return (
     <React.Fragment>
@@ -75,32 +73,16 @@ function Cards(props) {
                   <Grid item xs={12}>
                     <Grid container>
                       <Grid item xs={4}>
-                        {client.platform === "linux" && (
-                          <CardMedia
-                            className={classes.cardMedia}
-                            image="./linux.png"
-                          />
-                        )}
+                        {client.platform === "linux" && <CardMedia className={classes.cardMedia} image="./linux.png" />}
                         {client.platform === "mac" && (
-                          <CardMedia
-                            className={classes.cardMedia}
-                            image="./mac_black.png"
-                          />
+                          <CardMedia className={classes.cardMedia} image="./mac_black.png" />
                         )}
                         {client.platform === "windows" && (
-                          <CardMedia
-                            className={classes.cardMedia}
-                            image="./windows_grey.png"
-                          />
+                          <CardMedia className={classes.cardMedia} image="./windows_grey.png" />
                         )}
                       </Grid>
                       <Grid item xs={8}>
-                        <Typography
-                          gutterBottom
-                          variant="h5"
-                          component="h2"
-                          className={classes.cardHeader}
-                        >
+                        <Typography gutterBottom variant="h5" component="h2" className={classes.cardHeader}>
                           {client.device}
                         </Typography>
                       </Grid>
@@ -119,11 +101,7 @@ function Cards(props) {
                       size="small"
                       color="primary"
                       onClick={() => {
-                        window.open(
-                          `${mediaPrefix}${
-                            client.device
-                          }_${client.platform}.conf`
-                        );
+                        window.open(`${mediaPrefix}${client.device}_${client.platform}.conf`);
                       }}
                     >
                       Download
@@ -132,7 +110,7 @@ function Cards(props) {
                       size="small"
                       color="primary"
                       onClick={() => {
-                        DeleteClient(client.id);
+                        deleteClient(client.id);
                       }}
                     >
                       Delete
@@ -147,20 +125,3 @@ function Cards(props) {
     </React.Fragment>
   );
 }
-
-const mapStateToProps = state => {
-  return {
-    clients: state.newReducer.clients
-  };
-};
-
-const mapDispatchToProps = dispatch => ({
-  DeleteClient: id => {
-    dispatch(actionCreators.DeleteClient(id));
-  }
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Cards);

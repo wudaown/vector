@@ -13,14 +13,13 @@ const Axios = axios.create({
 // interceptor to add token to header
 // TODO
 // Add else branch to handle no token found
-// Axios.interceptors.request.use(config => {
-//   const token = localStorage.getItem("token");
-//   if (token) {
-//     config.headers.Authorization = `JWT ${token}`;
-//   }
-
-//   return config;
-// });
+Axios.interceptors.request.use(config => {
+  const token = sessionStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Token ${token}`;
+  }
+  return config;
+});
 
 // interceptor to handle different HTTP RESPONSE STATUS
 Axios.interceptors.response.use(

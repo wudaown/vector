@@ -1,36 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { Provider } from "react-redux";
+import React, { useState } from "react";
 import { CssBaseline } from "@material-ui/core";
-import { Route, BrowserRouter, Redirect } from "react-router-dom";
-import Login from "./common/login";
-import Header from "./common/header";
-import New from "./common/new";
+import { Route, BrowserRouter } from "react-router-dom";
+import Login from "./components/login";
+import Header from "./components/header";
+import New from "./components/new";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-import store from "./store";
+import { Context } from "./contexts";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const isAuthenticated = localStorage.getItem("isAuthenticated");
-    setIsAuthenticated(isAuthenticated);
-  }, [isAuthenticated]);
+  const [isAuthenticated, setIsAuthenticated] = useState(sessionStorage.getItem("isAuthenticated"));
 
   return (
     <React.Fragment>
-      <Provider store={store}>
-        <CssBaseline />
-        <BrowserRouter>
+      <CssBaseline />
+      <BrowserRouter>
+        <Context.Provider value={{ isAuthenticated, setIsAuthenticated }}>
           <Header />
-          <New />
-          {/* <Route exact path="/login" component={Login} />
-          {!isAuthenticated ? (
-            <Route exact path="/new" component={New} />
-          ) : (
-              <Redirect to="/login" />
-            )} */}
-        </BrowserRouter>
-      </Provider>
+          <ProtectedRoute exact path="/" component={New} />
+          <Route exact path="/login" component={Login} />
+        </Context.Provider>
+      </BrowserRouter>
     </React.Fragment>
   );
 }

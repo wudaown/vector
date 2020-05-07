@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
@@ -15,34 +14,72 @@ import FormControl from "@material-ui/core/FormControl";
 
 import Cards from "./Card";
 
-import { actionCreators } from "./store";
+import { GetClientsAPI, CreateClientAPI, DeleteClientAPI } from "../../api";
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   cardMedia: {
-    height: "30vh"
+    height: "30vh",
   },
   firstElement: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   form: {
-    paddingRight: theme.spacing(2)
-  }
+    paddingRight: theme.spacing(2),
+  },
 }));
 
-function NewClient(props) {
+export default function NewClient(props) {
   const classes = useStyles();
 
-  const { error, client } = props;
+  const [clients, setClients] = useState([]);
+  const [client, setClient] = useState({ device: "", platform: "", mode: "", range: "" });
+  const [error, setError] = useState(false);
 
-  const { GetClients, handleClientUpdate, handleClientSubmit } = props;
+  const deleteClient = id => {
+    DeleteClientAPI(id)
+      .then(res => {
+        if (res.status === 204) {
+          getClients();
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  const createClient = () => {
+    if (
+      client.device.lenght === 0 ||
+      client.platform.length === 0 ||
+      client.mode.length === 0
+      // Do not check for length for range
+      // since it is defined as extra range
+    ) {
+      setError(true);
+    } else {
+      CreateClientAPI(client)
+        .then(() => {
+          setClient({ device: "", platform: "", mode: "", range: "" });
+          getClients();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  };
+  const getClients = () => {
+    GetClientsAPI()
+      .then(res => setClients(res))
+      .catch(err => console.log(err));
+  };
 
   useEffect(() => {
-    GetClients();
-  }, [GetClients]);
+    getClients();
+  }, []);
 
   return (
     <React.Fragment>
@@ -51,25 +88,9 @@ function NewClient(props) {
         <Paper className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={4}>
-              <CardMedia
-                className={classes.cardMedia}
-              // image="https://source.unsplash.com/random"
-              />
-              {/* {client.platform === "linux" && (
-                <CardMedia className={classes.cardMedia} image="./linux.png" />
-              )}
-              {client.platform === "mac" && (
-                <CardMedia
-                  className={classes.cardMedia}
-                  image="./mac_black.png"
-                />
-              )}
-              {client.platform === "windows" && (
-                <CardMedia
-                  className={classes.cardMedia}
-                  image="./windows_grey.png"
-                />
-              )} */}
+              {client.platform === "linux" && <CardMedia className={classes.cardMedia} image="./linux.png" />}
+              {client.platform === "mac" && <CardMedia className={classes.cardMedia} image="./mac_black.png" />}
+              {client.platform === "windows" && <CardMedia className={classes.cardMedia} image="./windows_grey.png" />}
             </Grid>
             <Grid item xs={8}>
               <Grid container justify="center" spacing={3}>
@@ -80,7 +101,7 @@ function NewClient(props) {
                     fullWidth
                     name="device"
                     value={client.device}
-                    onChange={e => handleClientUpdate("device", e.target.value)}
+                    onChange={e => setClient({ ...client, device: e.target.value })}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -90,12 +111,10 @@ function NewClient(props) {
                       error={client.platform.length === 0 && error}
                       value={client.platform}
                       autoWidth
-                      onChange={e =>
-                        handleClientUpdate("platform", e.target.value)
-                      }
+                      onChange={e => setClient({ ...client, platform: e.target.value })}
                       inputProps={{
                         name: "platform",
-                        id: "platform-select"
+                        id: "platform-select",
                       }}
                     >
                       <MenuItem value="">
@@ -115,11 +134,11 @@ function NewClient(props) {
                     <Select
                       value={client.mode}
                       error={client.mode.length === 0 && error}
-                      onChange={e => handleClientUpdate("mode", e.target.value)}
+                      onChange={e => setClient({ ...client, mode: e.target.value })}
                       autoWidth
                       inputProps={{
                         name: "mode",
-                        id: "mode-select"
+                        id: "mode-select",
                       }}
                     >
                       <MenuItem value="">
@@ -134,20 +153,15 @@ function NewClient(props) {
                   <TextField
                     error={client.range.length === 0 && error}
                     label="Extra IP Range"
-                    placeholder='192.168.0.0/24, 172.0.0.0/24'
+                    placeholder="192.168.0.0/24, 172.0.0.0/24"
                     fullWidth
                     name="range"
                     value={client.range}
-                    onChange={e => handleClientUpdate("range", e.target.value)}
+                    onChange={e => setClient({ ...client, range: e.target.value })}
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={handleClientSubmit}
-                  >
+                  <Button variant="contained" color="primary" fullWidth onClick={createClient}>
                     Submit
                   </Button>
                 </Grid>
@@ -156,35 +170,7 @@ function NewClient(props) {
           </Grid>
         </Paper>
       </Container>
-      <Cards />
+      <Cards clients={clients} deleteClient={deleteClient} />
     </React.Fragment>
   );
 }
-
-const mapStateToProps = state => {
-  return {
-    clients: state.newReducer.clients,
-    client: state.newReducer.client,
-    error: state.newReducer.error
-  };
-};
-
-const mapDispatchToProps = dispatch => ({
-  GetClients: () => {
-    dispatch(actionCreators.GetClients());
-  },
-  handleClientUpdate: (field, value) => {
-    dispatch(actionCreators.handleClientUpdate(field, value));
-  },
-  handleInputUpdate: (name, value) => {
-    dispatch(actionCreators.handleInputUpdate(name, value));
-  },
-  handleClientSubmit: () => {
-    dispatch(actionCreators.handleClientSubmit());
-  }
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NewClient);
