@@ -6,4 +6,4 @@ export const API = process.env.NODE_ENV === "development" ? `http://${hostname}:
 export const mediaPrefix =
   process.env.NODE_ENV === "development"
     ? `http://${hostname}:8000/media/client/`
-    : `https://${hostname}:8000/media/client/`;
+    : `https://${hostname}/media/client/`;
