@@ -30,6 +30,9 @@ export default function Login(props) {
 
   const handleChangeInput = e => {
     const { name, value } = e.target;
+    if (loginBtnText !== "Login") {
+      setLoginBtnText("Login");
+    }
     if (error) {
       setError(false);
     }
@@ -58,7 +61,7 @@ export default function Login(props) {
       } catch (err) {
         setError(true);
         setLoading(false);
-        setLoginBtnText("Login");
+        setLoginBtnText("username or password incorrect");
       }
     }
   };
@@ -99,6 +102,11 @@ export default function Login(props) {
                   fullWidth
                   value={password}
                   error={password.length === 0 && error}
+                  onKeyPress={e => {
+                    if (e.key === "Enter") {
+                      handleSubmit();
+                    }
+                  }}
                   onChange={e => {
                     handleChangeInput(e);
                   }}
@@ -111,7 +119,7 @@ export default function Login(props) {
                   variant="contained"
                   fullWidth
                   color="primary"
-                  disabled={loading || error}
+                  disabled={loading && error}
                   onClick={() => handleSubmit()}
                 >
                   {loginBtnText}
